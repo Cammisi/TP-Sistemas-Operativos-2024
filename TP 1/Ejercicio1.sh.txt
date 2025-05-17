@@ -1,0 +1,58 @@
+#!/bin/bash 
+nro_grupo=$1 
+cant_parametros=$# 
+#evaluamos que los parametros son validos 
+if [ $cant_parametros -ne 2 ]; then  
+echo "Cantidad de parametros invalidos" 
+exit 1 
+fi 
+if [ $nro_grupo -le 0 ]; then 
+echo "numero de grupo invalido" 
+exit 1 
+fi 
+nombre_archivo=$2 
+if [ ! -f "$nombre_archivo" ]; then  
+echo "usage: ./ejercicio.sh <nro_grupo> <nombre_archivo>" 
+exit 1 
+fi 
+#Crea los txt 
+rm -f salida.txt no_comando.txt 
+#larga el mensaje para continuar la opracion o cancelar 
+echo "$nro_grupo press Ctr + C  para cancelar o Enter para continuar"  
+read 
+#Si el modulo del nro_grupo % 2 es distinto de cero lee la linea 2, si no la 3 
+if [ $(( nro_grupo % 2 )) -eq 0 ]; then  
+linea=$(sed -n 2p "$nombre_archivo") 
+else
+linea=$(sed -n 3p "$nombre_archivo") 
+fi 
+ 
+#se evalua que palabra es un comando y la ejecuta  
+ 
+for palabra in $linea; do 
+ 
+#verifica que no sea vacia la palabra 
+ 
+    if [ -z "$palabra" ]; then 
+        continue 
+    fi 
+     
+    if type "$palabra" &> /dev/null; then 
+ 
+ #guarda las palabras en cada txt 
+ 
+        echo "Ejecutando comando: $palabra" 
+        resultado=$($palabra 2>&1) 
+        echo "Comando: $palabra" >> salida.txt 
+        echo "Resultado: $resultado" >> salida.txt  
+  
+     
+ else 
+         
+ echo "No es un comando: $palabra" 
+        echo "$palabra" >> no_comando.txt 
+     
+ fi 
+done 
+#Imprime por pantalla donde se guardaron los procedimientos 
+echo "Procesamiento completado. Resultados guardados en salida.txt y no_comando.txt" 

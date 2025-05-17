@@ -1,0 +1,53 @@
+#!/bin/bash 
+ 
+# declara variables  
+declare -a calificaciones 
+ 
+#metodo de Clasificacion de una calificacion segun el Rango  
+ 
+clasificar() { 
+    if [ $1 -ge 90 ]; then 
+        echo "Excelente" 
+    elif [ $1 -ge 70 ]; then 
+        echo "Bueno" 
+    elif [ $1 -ge 50 ]; then 
+        echo "Regular" 
+    else 
+        echo "Insuficiente" 
+    fi 
+} 
+ 
+#Ingreso de calificaciones de cada estudiante  
+ 
+echo "Ingresa las calificaciones de 5 estudiantes (valores entre 0 y 100):" 
+for i in {1..5}; do 
+    while true; do 
+ 
+#Verifica que la calificacion sea valida, este dentro del rango Numerico       
+ 
+    read -p "CalificaciÃ³n del estudiante $i: " calificacion 
+        if [[ $calificacion =~ ^[0-9]+$ ]] && [ $calificacion -ge 0 ] && [ $calificacion -le 100 ]; then 
+            calificaciones[$i]=$calificacion 
+            break 
+        else 
+            echo "Por favor, ingresa un nÃºmero entero entre 0 y 100." 
+        fi 
+    done 
+done 
+ 
+#Recorre cada calificacion y calcula el promedio 
+suma=0 
+for calificacion in "${calificaciones[@]}"; do 
+    suma=$((suma + calificacion)) 
+done 
+promedio=$((suma / 5)) 
+ 
+ 
+echo -e "\n--- Resultados ---" 
+echo "Promedio de calificaciones: $promedio" 
+ 
+# Clasificar y mostrar cada calificaciÃ³n 
+for i in {1..5}; do 
+clasificacion=$(clasificar "${calificaciones[$i]}") 
+echo "CalificaciÃ³n del estudiante $i: ${calificaciones[$i]} - ClasificaciÃ³n: $clasificacion" 
+done 

@@ -1,0 +1,26 @@
+#!/bin/bash 
+#archivo temporal  
+archivos7dias=$(find "/mnt/ej2" -name "*.txt" -mtime -7) 
+#crea archivos en directorios, con fecha actual  
+fecha=$(date +%Y-%m-%d) 
+mkdir -p "/home/usuario/backup/$fecha" 
+touch "/home/usuario/backup/$fecha/resumen.txt" 
+cant_palabras=0 
+#recorre archivo temporal y busca la la palabra proyecto en los archivos que son .txt 
+for archivo in $archivos7dias; do 
+if grep -q "proyecto" "$archivo" &> /dev/null; then 
+#Una vez encuentra la plabra 'proyecto' en algun archivo (.txt) guarda en el directorio creado 
+nombre_archivo=$(basename "$archivo") 
+size_archivo=$(wc -c < "$archivo") 
+#calcula el tamaÃ±o de dicho archivo  
+echo "Archivo: $nombre_archivo, size: $size_archivo bytes" >> "/home/usuario/backup/$fecha/resumen.txt" 
+#suma la cantidad de palabras  
+cant_palabras=$(wc -w < "$archivo") 
+total=$((total + cant_palabras)) 
+fi 
+done  
+echo "Total de palabras en todos los archivos: $total" >> "/home/usuario/backup/$fecha/resumen.txt" 
+#muestra por pantalla 
+echo "Proceso completado." 
+echo "Los archivos se han copiado a /home/usuario/backup/$fecha y el resumen esta en 
+/home/usuario/backup/$fecha/resumen.txt." 
